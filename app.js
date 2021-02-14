@@ -40,7 +40,7 @@ const getVideos = (query) => {
 }
 
 searchBtnVdo.addEventListener('click', function () {
-  document.querySelector('.main').style.display = 'block';
+  document.querySelector('.main').style.display = 'none';
   clearInterval(timer);
   const searchVdo = document.getElementById('search-vdo');
   getVideos(searchVdo.value);
