@@ -2,6 +2,7 @@ const imagesArea = document.querySelector('.images');
 const gallery = document.querySelector('.gallery');
 const galleryHeader = document.querySelector('.gallery-header');
 const searchBtn = document.getElementById('search-btn');
+const searchBtnVdo = document.getElementById('search-btn-vdo');
 const sliderBtn = document.getElementById('create-slider');
 const sliderContainer = document.getElementById('sliders');
 let input = document.getElementById('search')
@@ -13,6 +14,38 @@ let sliders = [];
 // Find the name in the url and go to their website
 // to create your own api key
 const KEY = '15674931-a9d714b6e9d654524df198e00&q';
+
+// show videos
+const showVideos = (videos) => {
+  imagesArea.style.display = 'block';
+  gallery.innerHTML = '';
+  // show gallery title
+  toggleSpinner();
+  galleryHeader.style.display = 'flex';
+  videos.forEach(video => {
+    let div = document.createElement('div');
+    div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
+    div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${video.webformatURL}") src="${video.webformatURL}" alt="${video.tags}">`;
+    gallery.appendChild(div)
+  })
+
+}
+
+const getVideos = (query) => {
+  toggleSpinner();
+  fetch(`https://pixabay.com/api/videos/?key=${KEY}&q=${query}&video_type=all&min_width=300px&pretty=true`)
+    .then(response => response.json())
+    .then(data => showVideos(data.hits))
+    .catch(err => console.log(err))
+}
+
+searchBtnVdo.addEventListener('click', function () {
+  document.querySelector('.main').style.display = 'block';
+  clearInterval(timer);
+  const searchVdo = document.getElementById('search-vdo');
+  getVideos(searchVdo.value);
+  
+})
 
 // show images 
 const showImages = (images) => {
@@ -41,12 +74,11 @@ const getImages = (query) => {
 let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
-  element.classList.add('added');
- 
+  element.classList.toggle('added');
   let item = sliders.indexOf(img);
   if (item === -1) {
     sliders.push(img);
-  } else {
+  } else {    
     sliders.pop(img);
   }
 }
