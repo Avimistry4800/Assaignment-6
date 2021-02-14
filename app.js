@@ -4,6 +4,7 @@ const galleryHeader = document.querySelector('.gallery-header');
 const searchBtn = document.getElementById('search-btn');
 const sliderBtn = document.getElementById('create-slider');
 const sliderContainer = document.getElementById('sliders');
+let input = document.getElementById('search')
 // selected image 
 let sliders = [];
 
@@ -18,19 +19,20 @@ const showImages = (images) => {
   imagesArea.style.display = 'block';
   gallery.innerHTML = '';
   // show gallery title
+  toggleSpinner();
   galleryHeader.style.display = 'flex';
-  console.log(images);
   images.forEach(image => {
     let div = document.createElement('div');
     div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
     div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
-    gallery.appendChild(div);
+    gallery.appendChild(div)
   })
 
 }
 
 const getImages = (query) => {
-  fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
+  toggleSpinner();
+  fetch(`https://pixabay.com/api/?key=${KEY}&q=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
     .then(data => showImages(data.hits))
     .catch(err => console.log(err))
@@ -45,7 +47,7 @@ const selectItem = (event, img) => {
   if (item === -1) {
     sliders.push(img);
   } else {
-    alert('Hey, Already added !')
+    sliders.pop(img);
   }
 }
 var timer
@@ -112,6 +114,7 @@ const changeSlide = (index) => {
   items[index].style.display = "block"
 }
 
+
 searchBtn.addEventListener('click', function () {
   document.querySelector('.main').style.display = 'none';
   clearInterval(timer);
@@ -123,3 +126,20 @@ searchBtn.addEventListener('click', function () {
 sliderBtn.addEventListener('click', function () {
   createSlider()
 })
+
+// Add search input bos enter key 
+document.getElementById('search').addEventListener('keypress', function (target) {
+  if (target.key === 'Enter') {
+    document.getElementById('search-btn').click();
+  }
+})
+
+
+// bonus part
+
+const toggleSpinner = () => {
+  const spinner = document.getElementById('loading-spinner');
+  const imagesArea = document.querySelector('.images');
+  spinner.classList.toggle('d-none');
+  imagesArea.classList.toggle('d-none');
+}
